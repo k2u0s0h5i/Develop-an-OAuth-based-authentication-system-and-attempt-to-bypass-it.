@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Login</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <div class="login-container">
+        <h2>Student Portal Login</h2>
+        <button onclick="login()">Login with Mock OAuth</button>
+    </div>
+
+    <script>
+        function login() {
+            const clientId = "client123";
+            const redirectUri = window.location.origin + "/dashboard.html";
+            const authUrl = `http://localhost:5000/authorize?client_id=${clientId}&redirect_uri=${redirectUri}`;
+            window.location.href = authUrl;
+        }
+    </script>
+</body>
+</html>

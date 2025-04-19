@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard</title>
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="sidebar">
+            <h2>Student Portal</h2>
+            <ul>
+                <li><a href="#">Dashboard</a></li>
+                <li><a href="#">Assignments</a></li>
+                <li><a href="#">Grades</a></li>
+                <li><a href="#">Messages</a></li>
+                <li><a href="#">Logout</a></li>
+            </ul>
+        </div>
+
+        <div class="content">
+            <div class="header">
+                <h1>Welcome to Your Student Portal</h1>
+                <p id="info">Loading user info...</p>
+            </div>
+            <div class="user-info">
+                <h3>Your Profile:</h3>
+                <p id="username">Username: Loading...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const query = new URLSearchParams(window.location.search);
+        const code = query.get('code');
+
+        async function getToken() {
+            const res = await fetch('http://localhost:5000/token', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code })
+            });
+            return await res.json();
+        }
+
+        async function getUserInfo(token) {
+            const res = await fetch('http://localhost:5000/userinfo', {
+                headers: { Authorization: 'Bearer ' + token }
+            });
+            return await res.json();
+        }
+
+        async function init() {
+            if (!code) {
+                document.getElementById('info').innerText = "No code found in URL";
+                return;
+            }
+
+            const tokenData = await getToken();
+            if (tokenData.access_token) {
+                const userInfo = await getUserInfo(tokenData.access_token);
+                document.getElementById('info').innerText = `Hello, ${userInfo.username}!`;
+                document.getElementById('username').innerText = `Username: ${userInfo.username}`;
+            } else {
+                document.getElementById('info').innerText = "Failed to retrieve token.";
+            }
+        }
+
+        init();
+    </script>
+</body>
+</html>
